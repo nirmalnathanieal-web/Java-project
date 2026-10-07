@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MediReminder - Medicine History</title>
+
+<style>
+
+/* ================= GENERAL ================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f8fb;
+    color: #1f2937;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar {
+    background: white;
+    padding: 18px 6%;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1677ff;
+}
+
+.logo span {
+    margin-right: 8px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    border: none;
+    background: transparent;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.nav-btn:hover,
+.nav-btn.active {
+    background: #1677ff;
+    color: white;
+}
+
+/* ================= MAIN ================= */
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.page-title {
+    margin-bottom: 8px;
+    font-size: 32px;
+}
+
+.page-subtitle {
+    color: #6b7280;
+    margin-bottom: 30px;
+}
+
+/* ================= STAT CARDS ================= */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+}
+
+.stat-icon {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.stat-number {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.stat-title {
+    color: #6b7280;
+    margin-top: 5px;
+}
+
+/* ================= CONTROLS ================= */
+
+.controls {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+}
+
+.controls input,
+.controls select {
+    padding: 12px 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    outline: none;
+}
+
+.controls input:focus,
+.controls select:focus {
+    border-color: #1677ff;
+}
+
+.clear-btn {
+    background: #eef2f7;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.clear-btn:hover {
+    background: #dbe4ee;
+}
+
+/* ================= TABLE ================= */
+
+.history-box {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px;
+}
+
+thead {
+    background: #f1f6fb;
+}
+
+th {
+    padding: 16px;
+    text-align: left;
+    font-size: 14px;
+}
+
+td {
+    padding: 16px;
+    border-bottom: 1px solid #edf0f3;
+}
+
+tr:hover {
+    background: #f9fbfd;
+}
+
+/* ================= STATUS ================= */
+
+.status {
+    display: inline-block;
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.taken {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.missed {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.skipped {
+    background: #ffedd5;
+    color: #ea580c;
+}
+
+/* ================= EMPTY ================= */
+
+.empty {
+    text-align: center;
+    padding: 50px;
+    color: #6b7280;
+}
+
+.empty-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width: 900px) {
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media(max-width: 600px) {
+
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .page-title {
+        font-size: 26px;
+    }
+
+    .container {
+        width: 94%;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<header class="navbar">
+
+    <div class="logo">
+        💊 MediReminder
+    </div>
+
+    <nav class="nav-links">
+
+        <button class="nav-btn">
+            Home
+        </button>
+
+        <button class="nav-btn">
+            Add Medicine
+        </button>
+
+        <button class="nav-btn">
+            My Medicines
+        </button>
+
+        <button class="nav-btn">
+            Dashboard
+        </button>
+
+        <button class="nav-btn active">
+            History
+        </button>
+
+        <button class="nav-btn">
+            Profile
+        </button>
+
+    </nav>
+
+</header>
+
+
+<!-- ================= MAIN ================= -->
+
+<div class="container">
+
+    <h1 class="page-title">
+        Medicine History
+    </h1>
+
+    <p class="page-subtitle">
+        Track your medicine intake and monitor your medication progress.
+    </p>
+
+
+    <!-- ================= STATISTICS ================= -->
+
+    <div class="stats">
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                💊
+            </div>
+
+            <div class="stat-number" id="totalCount">
+                0
+            </div>
+
+            <div class="stat-title">
+                Total Medicines
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ✅
+            </div>
+
+            <div class="stat-number" id="takenCount">
+                0
+            </div>
+
+            <div class="stat-title">
+                Taken
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ❌
+            </div>
+
+            <div class="stat-number" id="missedCount">
+                0
+            </div>
+
+            <div class="stat-title">
+                Missed
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ⏭️
+            </div>
+
+            <div class="stat-number" id="skippedCount">
+                0
+            </div>
+
+            <div class="stat-title">
+                Skipped
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= FILTERS ================= -->
+
+    <div class="controls">
+
+        <input
+            type="text"
+            id="search"
+            placeholder="🔍 Search medicine..."
+        >
+
+        <select id="statusFilter">
+
+            <option value="all">
+                All Status
+            </option>
+
+            <option value="Taken">
+                Taken
+            </option>
+
+            <option value="Missed">
+                Missed
+            </option>
+
+            <option value="Skipped">
+                Skipped
+            </option>
+
+        </select>
+
+
+        <input
+            type="date"
+            id="dateFilter"
+        >
+
+
+        <button
+            class="clear-btn"
+            onclick="clearFilters()"
+        >
+            Clear Filters
+        </button>
+
+    </div>
+
+
+    <!-- ================= HISTORY TABLE ================= -->
+
+    <div class="history-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Medicine
+                    </th>
+
+                    <th>
+                        Dosage
+                    </th>
+
+                    <th>
+                        Type
+                    </th>
+
+                    <th>
+                        Scheduled Time
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="historyTable">
+
+            </tbody>
+
+        </table>
+
+
+        <div
+            class="empty"
+            id="emptyMessage"
+            style="display:none;"
+        >
+
+            <div class="empty-icon">
+                📋
+            </div>
+
+            <h3>
+                No Medicine History
+            </h3>
+
+            <p>
+                Your medicine activity will appear here.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   MEDICINE HISTORY DATA
+===================================================== */
+
+/*
+   These are sample records.
+
+   Later you can replace these with the medicines
+   stored by your existing medicine application.
+*/
+
+let historyData = [
+
+    {
+        date: "2026-10-07",
+        medicine: "Paracetamol",
+        dosage: "500 mg",
+        type: "Tablet",
+        time: "08:00 AM",
+        status: "Taken"
+    },
+
+    {
+        date: "2026-10-07",
+        medicine: "Vitamin D",
+        dosage: "1000 IU",
+        type: "Capsule",
+        time: "01:00 PM",
+        status: "Missed"
+    },
+
+    {
+        date: "2026-10-06",
+        medicine: "Amoxicillin",
+        dosage: "250 mg",
+        type: "Capsule",
+        time: "09:00 AM",
+        status: "Taken"
+    },
+
+    {
+        date: "2026-10-06",
+        medicine: "Cetirizine",
+        dosage: "10 mg",
+        type: "Tablet",
+        time: "09:00 PM",
+        status: "Skipped"
+    },
+
+    {
+        date: "2026-10-05",
+        medicine: "Paracetamol",
+        dosage: "500 mg",
+        type: "Tablet",
+        time: "08:00 AM",
+        status: "Taken"
+    }
+
+];
+
+
+/* =====================================================
+   DISPLAY HISTORY
+===================================================== */
+
+function displayHistory() {
+
+    const table =
+        document.getElementById("historyTable");
+
+    const empty =
+        document.getElementById("emptyMessage");
+
+    const search =
+        document
+        .getElementById("search")
+        .value
+        .toLowerCase();
+
+    const status =
+        document
+        .getElementById("statusFilter")
+        .value;
+
+    const date =
+        document
+        .getElementById("dateFilter")
+        .value;
+
+
+    /* FILTER DATA */
+
+    const filteredData =
+        historyData.filter(item => {
+
+            const medicineMatch =
+                item.medicine
+                .toLowerCase()
+                .includes(search);
+
+            const statusMatch =
+                status === "all" ||
+                item.status === status;
+
+            const dateMatch =
+                date === "" ||
+                item.date === date;
+
+            return (
+                medicineMatch &&
+                statusMatch &&
+                dateMatch
+            );
+
+        });
+
+
+    table.innerHTML = "";
+
+
+    /* NO RESULTS */
+
+    if(filteredData.length === 0) {
+
+        empty.style.display = "block";
+
+    } else {
+
+        empty.style.display = "none";
+
+
+        filteredData.forEach(item => {
+
+            let statusClass = "";
+
+            if(item.status === "Taken") {
+                statusClass = "taken";
+            }
+
+            if(item.status === "Missed") {
+                statusClass = "missed";
+            }
+
+            if(item.status === "Skipped") {
+                statusClass = "skipped";
+            }
+
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${formatDate(item.date)}
+                </td>
+
+                <td>
+                    <strong>
+                        ${item.medicine}
+                    </strong>
+                </td>
+
+                <td>
+                    ${item.dosage}
+                </td>
+
+                <td>
+                    ${item.type}
+                </td>
+
+                <td>
+                    ${item.time}
+                </td>
+
+                <td>
+
+                    <span class="status ${statusClass}">
+                        ${getStatusIcon(item.status)}
+                        ${item.status}
+                    </span>
+
+                </td>
+
+            `;
+
+
+            table.appendChild(row);
+
+        });
+
+    }
+
+
+    updateStatistics();
+
+}
+
+
+/* =====================================================
+   FORMAT DATE
+===================================================== */
+
+function formatDate(date) {
+
+    const d =
+        new Date(date);
+
+    return d.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* =====================================================
+   STATUS ICON
+===================================================== */
+
+function getStatusIcon(status) {
+
+    if(status === "Taken")
+        return "✓";
+
+    if(status === "Missed")
+        return "✕";
+
+    if(status === "Skipped")
+        return "→";
+
+    return "";
+
+}
+
+
+/* =====================================================
+   UPDATE STATISTICS
+===================================================== */
+
+function updateStatistics() {
+
+    document
+        .getElementById("totalCount")
+        .textContent =
+        historyData.length;
+
+
+    document
+        .getElementById("takenCount")
+        .textContent =
+        historyData.filter(
+            item => item.status === "Taken"
+        ).length;
+
+
+    document
+        .getElementById("missedCount")
+        .textContent =
+        historyData.filter(
+            item => item.status === "Missed"
+        ).length;
+
+
+    document
+        .getElementById("skippedCount")
+        .textContent =
+        historyData.filter(
+            item => item.status === "Skipped"
+        ).length;
+
+}
+
+
+/* =====================================================
+   CLEAR FILTERS
+===================================================== */
+
+function clearFilters() {
+
+    document
+        .getElementById("search")
+        .value = "";
+
+    document
+        .getElementById("statusFilter")
+        .value = "all";
+
+    document
+        .getElementById("dateFilter")
+        .value = "";
+
+    displayHistory();
+
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+document
+    .getElementById("search")
+    .addEventListener(
+        "input",
+        displayHistory
+    );
+
+
+/* =====================================================
+   STATUS FILTER
+===================================================== */
+
+document
+    .getElementById("statusFilter")
+    .addEventListener(
+        "change",
+        displayHistory
+    );
+
+
+/* =====================================================
+   DATE FILTER
+===================================================== */
+
+document
+    .getElementById("dateFilter")
+    .addEventListener(
+        "change",
+        displayHistory
+    );
+
+
+/* =====================================================
+   START
+===================================================== */
+
+displayHistory();
+
+</script>
+
+</body>
+</html>

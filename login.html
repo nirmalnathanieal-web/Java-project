@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediCare | Login</title>
+
+  <!-- Poppins font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ---------- Reset & variables ---------- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #0ea5a4;
+      --primary-dark: #0b8584;
+      --blue: #3b9ae1;
+      --light-blue: #e0f4ff;
+      --light-green: #dcfce7;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #d5e3ec;
+      --error: #e11d48;
+      --success: #16a34a;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      background: linear-gradient(135deg, #d9f2ff 0%, #d4f7e8 50%, #cfeefd 100%);
+      background-size: 200% 200%;
+      animation: bgShift 12s ease infinite;
+    }
+
+    @keyframes bgShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ---------- Page layout ---------- */
+    .page { min-height: 100vh; display: flex; }
+
+    /* ---------- Left illustration ---------- */
+    .illustration {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      background: linear-gradient(160deg, var(--blue) 0%, var(--primary) 100%);
+      color: #fff;
+    }
+
+    .circle { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.12); }
+    .circle-1 { width: 380px; height: 380px; top: -120px; left: -120px; }
+    .circle-2 { width: 300px; height: 300px; bottom: -100px; right: -80px; }
+
+    .hero-text {
+      position: relative;
+      text-align: center;
+      max-width: 400px;
+      margin-bottom: 50px;
+      animation: fadeUp 0.8s ease both;
+    }
+    .hero-text h2 { font-size: 2rem; font-weight: 600; margin-bottom: 12px; }
+    .hero-text p  { font-weight: 300; line-height: 1.7; opacity: 0.95; }
+
+    .float-cards {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .float-card {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--text);
+      padding: 14px 20px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      animation: float 4s ease-in-out infinite;
+    }
+    .float-card strong { display: block; font-size: 1rem; }
+    .float-card small  { color: var(--muted); font-size: 0.8rem; }
+    .fc-icon {
+      font-size: 1.8rem;
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: var(--light-blue);
+    }
+    .fc-2 { animation-delay: 0.8s; margin-left: 30px; }
+    .fc-2 .fc-icon { background: var(--light-green); }
+    .fc-3 { animation-delay: 1.6s; }
+    .fc-3 .fc-icon { background: #ffe4e8; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-10px); }
+    }
+
+    /* ---------- Login wrapper & card ---------- */
+    .login-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      padding: 40px 35px;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(14, 100, 130, 0.18);
+      animation: fadeUp 0.7s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(25px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card.shake { animation: shake 0.45s ease; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    /* ---------- Brand ---------- */
+    .brand { text-align: center; margin-bottom: 8px; }
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--blue), var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tagline { color: var(--muted); font-weight: 500; letter-spacing: 1px; font-size: 0.9rem; }
+    .welcome { text-align: center; color: var(--muted); font-size: 0.9rem; margin: 18px 0 22px; }
+
+    /* ---------- Alert box ---------- */
+    .alert {
+      display: none;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .alert.show { display: block; animation: fadeUp 0.3s ease; }
+    .alert.error   { background: #ffe4e8; color: var(--error); }
+    .alert.success { background: var(--light-green); color: var(--success); }
+
+    /* ---------- Form ---------- */
+    .form-group { margin-bottom: 18px; }
+    label { font-size: 0.85rem; font-weight: 500; display: block; margin-bottom: 6px; }
+
+    .input-wrap { position: relative; }
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      padding: 13px 44px 13px 42px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      border: 1.8px solid var(--border);
+      border-radius: 12px;
+      background: #f8fcff;
+      outline: none;
+      transition: 0.25s;
+    }
+    .input-wrap input:focus {
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(14, 165, 164, 0.15);
+    }
+    .input-wrap input.invalid {
+      border-color: var(--error);
+      box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.1);
+    }
+
+    .toggle-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      display: flex;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+    .toggle-btn:hover { color: var(--primary); }
+
+    .error-msg { display: block; color: var(--error); font-size: 0.78rem; margin-top: 5px; }
+
+    /* ---------- Remember me / forgot ---------- */
+    .options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      font-size: 0.85rem;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      margin: 0;
+      font-weight: 400;
+      position: relative;
+      user-select: none;
+    }
+    .remember input { position: absolute; opacity: 0; }
+    .checkmark {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-radius: 5px;
+      display: grid;
+      place-items: center;
+      transition: 0.2s;
+    }
+    .remember input:checked + .checkmark { background: var(--primary); border-color: var(--primary); }
+    .remember input:checked + .checkmark::after { content: "✓"; color: #fff; font-size: 0.7rem; }
+    .remember input:focus-visible + .checkmark { box-shadow: 0 0 0 3px rgba(14, 165, 164, 0.3); }
+
+    .link { color: var(--primary); text-decoration: none; font-weight: 500; transition: 0.2s; }
+    .link:hover { color: var(--primary-dark); text-decoration: underline; }
+
+    /* ---------- Login button ---------- */
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--blue), var(--primary));
+      box-shadow: 0 8px 20px rgba(14, 165, 164, 0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .login-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(14, 165, 164, 0.45); }
+    .login-btn:active:not(:disabled) { transform: translateY(0); }
+    .login-btn:disabled { opacity: 0.85; cursor: not-allowed; }
+
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .login-btn.loading .spinner { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---------- Footer text ---------- */
+    .signup-text { text-align: center; font-size: 0.88rem; color: var(--muted); margin-top: 22px; }
+    .demo-hint {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 14px;
+      padding: 8px;
+      background: var(--light-blue);
+      border-radius: 8px;
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 900px) {
+      .illustration { display: none; }
+    }
+    @media (max-width: 480px) {
+      .card { padding: 32px 22px; border-radius: 20px; }
+      .logo { font-size: 1.7rem; }
+      .options { flex-direction: column; align-items: flex-start; gap: 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+
+    <!-- Left side illustration (hidden on mobile) -->
+    <section class="illustration" aria-hidden="true">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+
+      <div class="hero-text">
+        <h2>Never miss a dose again.</h2>
+        <p>Stay on track with your medicines and take care of your health, every day.</p>
+      </div>
+
+      <div class="float-cards">
+        <div class="float-card fc-1">
+          <span class="fc-icon">💊</span>
+          <div><strong>Medicine</strong><small>Track every dose</small></div>
+        </div>
+        <div class="float-card fc-2">
+          <span class="fc-icon">🔔</span>
+          <div><strong>Reminder</strong><small>On-time alerts</small></div>
+        </div>
+        <div class="float-card fc-3">
+          <span class="fc-icon">❤️</span>
+          <div><strong>Health</strong><small>Stay healthy</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Login card -->
+    <section class="login-wrapper">
+      <div class="card" id="loginCard">
+
+        <div class="brand">
+          <h1 class="logo">💊 MediCare</h1>
+          <p class="tagline">Medicine Reminder</p>
+        </div>
+
+        <p class="welcome" id="welcomeText">Welcome back! Please login to continue.</p>
+
+        <div class="alert" id="alertBox" role="alert"></div>
+
+        <form id="loginForm" novalidate>
+
+          <div class="form-group" id="nameGroup" style="display:none;">
+            <label for="fullName">Full name</label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input type="text" id="fullName" placeholder="Enter your name" autocomplete="name" />
+            </div>
+            <small class="error-msg" id="nameError"></small>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="email">Email</label>
+            <div class="input-wrap">
+              <span class="input-icon">✉️</span>
+              <input type="text" id="email" placeholder="Enter your email" autocomplete="username" />
+            </div>
+            <small class="error-msg" id="emailError"></small>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label for="password" id="passwordLabel">Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" />
+              <button type="button" class="toggle-btn" id="togglePassword" aria-label="Show password">
+                <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"></path>
+                  <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+            <small class="error-msg" id="passwordError"></small>
+          </div>
+
+          <!-- Remember me + Forgot password -->
+          <div class="options">
+            <label class="remember">
+              <input type="checkbox" id="remember" />
+              <span class="checkmark"></span>
+              Remember Me
+            </label>
+            <a href="#" class="link" id="forgotLink">Forgot Password?</a>
+          </div>
+
+          <!-- Login button -->
+          <button type="submit" class="login-btn" id="loginBtn">
+            <span class="btn-text">Login</span>
+            <span class="spinner"></span>
+          </button>
+        </form>
+
+        <p class="signup-text">
+          Don't have an account? <a href="#" class="link" id="signupLink">Create Account</a>
+        </p>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const form          = document.getElementById("loginForm");
+    const nameInput     = document.getElementById("fullName");
+    const nameGroup     = document.getElementById("nameGroup");
+    const nameError     = document.getElementById("nameError");
+    const emailInput    = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const emailError    = document.getElementById("emailError");
+    const passwordError = document.getElementById("passwordError");
+    const toggleBtn     = document.getElementById("togglePassword");
+    const eyeOpen       = document.getElementById("eyeOpen");
+    const eyeClosed     = document.getElementById("eyeClosed");
+    const rememberBox   = document.getElementById("remember");
+    const loginBtn      = document.getElementById("loginBtn");
+    const btnText       = loginBtn.querySelector(".btn-text");
+    const alertBox      = document.getElementById("alertBox");
+    const card          = document.getElementById("loginCard");
+    const signupLink    = document.getElementById("signupLink");
+    const forgotLink    = document.getElementById("forgotLink");
+    const welcomeText   = document.getElementById("welcomeText");
+    const signupText    = document.querySelector(".signup-text");
+    let isRegistering = false;
+
+    const savedEmail = localStorage.getItem("mediCareRemember");
+    if (savedEmail) {
+      emailInput.value = savedEmail;
+      rememberBox.checked = true;
+    }
+
+    function showFieldError(input, errorEl, message) {
+      input.classList.add("invalid");
+      errorEl.textContent = message;
+    }
+
+    function clearFieldError(input, errorEl) {
+      input.classList.remove("invalid");
+      errorEl.textContent = "";
+    }
+
+    function showAlert(message, type) {
+      alertBox.textContent = message;
+      alertBox.className = "alert show " + type;
+    }
+
+    function hideAlert() {
+      alertBox.className = "alert";
+      alertBox.textContent = "";
+    }
+
+    function isValidEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function setLoading(isLoading) {
+      loginBtn.disabled = isLoading;
+      loginBtn.classList.toggle("loading", isLoading);
+      btnText.textContent = isLoading
+        ? (isRegistering ? "Creating account..." : "Logging in...")
+        : (isRegistering ? "Create Account" : "Login");
+    }
+
+    function setMode(registering) {
+      isRegistering = registering;
+      nameGroup.style.display = registering ? "" : "none";
+      passwordInput.autocomplete = registering ? "new-password" : "current-password";
+      document.getElementById("passwordLabel").textContent = registering ? "Password (at least 8 characters)" : "Password";
+      welcomeText.textContent = registering ? "Create an account to save your medicines." : "Welcome back! Please login to continue.";
+      signupText.firstChild.textContent = registering ? "Already have an account? " : "Don't have an account? ";
+      signupLink.textContent = registering ? "Login" : "Create Account";
+      forgotLink.style.display = registering ? "none" : "";
+      hideAlert();
+      clearFieldError(nameInput, nameError);
+      setLoading(false);
+    }
+
+    function validateEmail() {
+      const value = emailInput.value.trim();
+
+      if (value === "") {
+        showFieldError(emailInput, emailError, "Email is required");
+        return false;
+      }
+      if (!isValidEmail(value)) {
+        showFieldError(emailInput, emailError, "Please enter a valid email address");
+        return false;
+      }
+      clearFieldError(emailInput, emailError);
+      return true;
+    }
+
+    function validatePassword() {
+      const value = passwordInput.value;
+      const minimumLength = isRegistering ? 8 : 6;
+
+      if (value === "") {
+        showFieldError(passwordInput, passwordError, "Password is required");
+        return false;
+      }
+      if (value.length < minimumLength) {
+        showFieldError(passwordInput, passwordError, `Password must be at least ${minimumLength} characters`);
+        return false;
+      }
+      clearFieldError(passwordInput, passwordError);
+      return true;
+    }
+
+    emailInput.addEventListener("input", () => {
+      clearFieldError(emailInput, emailError);
+      hideAlert();
+    });
+    passwordInput.addEventListener("input", () => {
+      clearFieldError(passwordInput, passwordError);
+      hideAlert();
+    });
+
+    nameInput.addEventListener("input", () => clearFieldError(nameInput, nameError));
+
+    toggleBtn.addEventListener("click", () => {
+      const isHidden = passwordInput.type === "password";
+
+      passwordInput.type = isHidden ? "text" : "password";
+      eyeOpen.style.display   = isHidden ? "none" : "block";
+      eyeClosed.style.display = isHidden ? "block" : "none";
+      toggleBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      hideAlert();
+
+      let nameOk = true;
+      if (isRegistering) {
+        nameOk = nameInput.value.trim().length > 0;
+        if (!nameOk) showFieldError(nameInput, nameError, "Name is required");
+        else clearFieldError(nameInput, nameError);
+      }
+      const emailOk    = validateEmail();
+      const passwordOk = validatePassword();
+
+      if (!nameOk || !emailOk || !passwordOk) return;
+
+      setLoading(true);
+      try {
+        const response = await fetch(isRegistering ? "/api/register" : "/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: nameInput.value.trim(),
+            email: emailInput.value.trim(),
+            password: passwordInput.value
+          })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Unable to authenticate.");
+
+        if (rememberBox.checked) localStorage.setItem("mediCareRemember", emailInput.value.trim());
+        else localStorage.removeItem("mediCareRemember");
+        window.location.href = "/index.html";
+      } catch (error) {
+        setLoading(false);
+        showAlert(error instanceof TypeError
+          ? "Could not connect to the app server. Start it with npm start and try again."
+          : error.message, "error");
+        card.classList.remove("shake");
+        void card.offsetWidth;
+        card.classList.add("shake");
+      }
+    });
+
+    forgotLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      showAlert("Password reset is not available in this local app.", "error");
+    });
+
+    signupLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      setMode(!isRegistering);
+    });
+
+    fetch("/api/session")
+      .then((response) => {
+        if (response.ok) window.location.href = "/index.html";
+      })
+      .catch(() => {});
+  </script>
+</body>
+</html>

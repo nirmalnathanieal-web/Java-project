@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediReminder - Never miss your medicine</title>
+
+  <!-- Google Font for a clean, friendly, readable look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Our own stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ======================= TOP NAVIGATION BAR ======================= -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <span class="logo-icon">✚</span>
+        <span class="logo-text">MediReminder</span>
+      </div>
+
+      <!-- Navigation links - each one shows a different "page" (section) -->
+      <nav class="nav-links">
+        <button class="nav-btn active" data-page="home">Home</button>
+        <button class="nav-btn" data-page="add">Add Medicine</button>
+        <button class="nav-btn" data-page="list">My Medicines</button>
+        <button class="nav-btn" data-page="dashboard">Dashboard</button>
+        <button class="nav-btn" data-page="profile">Profile</button>
+      </nav>
+
+      <!-- Dark / Light mode toggle -->
+      <button id="themeToggle" class="theme-toggle" title="Toggle dark mode">🌙</button>
+      <button id="logoutBtn" class="nav-btn">Log out</button>
+    </div>
+  </header>
+
+  <div id="appError" class="app-error hidden" role="alert"></div>
+
+  <!-- A banner that pops up when it's time to take a medicine -->
+  <div id="reminderBanner" class="reminder-banner hidden">
+    <span id="reminderText"></span>
+    <button id="dismissReminder">Dismiss</button>
+  </div>
+
+  <main>
+
+    <!-- ======================= HOME PAGE ======================= -->
+    <section id="home" class="page active">
+      <div class="hero">
+        <p class="hero-eyebrow">✚ MediReminder</p>
+        <h1>Never miss your medicine</h1>
+        <p class="hero-subtext">
+          Add your medicines once, and let MediReminder keep track of dosage,
+          timing and frequency for you —           saved securely to your account.
+        </p>
+        <button class="btn btn-primary" id="goToAddBtn">+ Add Medicine</button>
+      </div>
+
+      <div class="home-stats" id="homeStats">
+        <!-- Quick stats get filled in by JavaScript -->
+      </div>
+
+      <div class="home-features">
+        <div class="feature-card">
+          <span class="feature-icon">💊</span>
+          <h3>Track every dose</h3>
+          <p>Keep dosage, type and frequency organized in one place.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">⏰</span>
+          <h3>Timely reminders</h3>
+          <p>Get an on-screen alert the moment it's time to take a medicine.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📊</span>
+          <h3>See your progress</h3>
+          <p>A simple dashboard shows what's taken, upcoming, or missed.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= ADD MEDICINE PAGE ======================= -->
+    <section id="add" class="page">
+      <div class="form-wrapper">
+        <h2 id="formTitle">Add a New Medicine</h2>
+        <p class="page-subtext">Fill in the details below and save it to your list.</p>
+
+        <form id="medicineForm">
+          <!-- Hidden field to store the ID when editing an existing medicine -->
+          <input type="hidden" id="medicineId" />
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="medName">Medicine Name</label>
+              <input type="text" id="medName" placeholder="e.g. Paracetamol" required />
+            </div>
+
+            <div class="form-group">
+              <label for="medDosage">Dosage</label>
+              <input type="text" id="medDosage" placeholder="e.g. 500mg" required />
+            </div>
+
+            <div class="form-group">
+              <label for="medType">Medicine Type</label>
+              <select id="medType" required>
+                <option value="" disabled selected>Select type</option>
+                <option>Tablet</option>
+                <option>Capsule</option>
+                <option>Syrup</option>
+                <option>Injection</option>
+                <option>Drops</option>
+                <option>Ointment</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="medDate">Date</label>
+              <input type="date" id="medDate" required />
+            </div>
+
+            <div class="form-group">
+              <label for="medTime">Time</label>
+              <input type="time" id="medTime" required />
+            </div>
+
+            <div class="form-group">
+              <label for="medFrequency">Frequency</label>
+              <select id="medFrequency" required>
+                <option value="" disabled selected>Select frequency</option>
+                <option>Once daily</option>
+                <option>Twice daily</option>
+                <option>Thrice daily</option>
+                <option>Every alternate day</option>
+                <option>Weekly</option>
+                <option>As needed</option>
+              </select>
+            </div>
+
+            <div class="form-group form-group-full">
+              <label for="medNotes">Notes (optional)</label>
+              <textarea id="medNotes" rows="3" placeholder="e.g. Take after food"></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="saveBtn">Save Medicine</button>
+            <button type="button" class="btn btn-ghost hidden" id="cancelEditBtn">Cancel Edit</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ======================= MEDICINE LIST PAGE ======================= -->
+    <section id="list" class="page">
+      <div class="list-header">
+        <h2>My Medicines</h2>
+        <div class="list-controls">
+          <input type="text" id="searchInput" placeholder="🔍 Search medicine..." />
+          <input type="date" id="filterDate" title="Filter by date" />
+          <button class="btn btn-ghost" id="clearFilterBtn">Clear</button>
+        </div>
+      </div>
+
+      <div id="medicineCards" class="medicine-cards">
+        <!-- Medicine cards are generated here by JavaScript -->
+      </div>
+
+      <p id="emptyListMsg" class="empty-msg hidden">
+        No medicines found. Try adding one from the "Add Medicine" page!
+      </p>
+    </section>
+
+    <!-- ======================= DASHBOARD PAGE ======================= -->
+    <section id="dashboard" class="page">
+      <h2>Dashboard</h2>
+      <p class="page-subtext">A quick overview of your medicine schedule and recent activity.</p>
+
+      <div class="dashboard-grid">
+        <div class="dash-card dash-total">
+          <span class="dash-number" id="statTotal">0</span>
+          <span class="dash-label">Total Medicines</span>
+        </div>
+        <div class="dash-card dash-taken">
+          <span class="dash-number" id="statTaken">0</span>
+          <span class="dash-label">Taken Today</span>
+        </div>
+        <div class="dash-card dash-upcoming">
+          <span class="dash-number" id="statUpcoming">0</span>
+          <span class="dash-label">Upcoming Today</span>
+        </div>
+        <div class="dash-card dash-missed">
+          <span class="dash-number" id="statMissed">0</span>
+          <span class="dash-label">Missed Today</span>
+        </div>
+      </div>
+
+      <div class="dashboard-list" style="margin-top: 24px;">
+        <h3>Today's Schedule</h3>
+        <div id="todayScheduleList"></div>
+      </div>
+
+      <div class="dashboard-list" style="margin-top: 24px;">
+        <h3>Medicine History</h3>
+
+        <div class="list-controls" style="margin: 0 0 18px 0;">
+          <input type="text" id="historySearch" placeholder="🔍 Search records..." />
+          <select id="historyStatusFilter">
+            <option value="all">All Status</option>
+            <option value="taken">Taken</option>
+            <option value="missed">Missed</option>
+            <option value="upcoming">Upcoming</option>
+          </select>
+          <input type="date" id="historyDateFilter" />
+          <button class="btn btn-ghost" id="clearHistoryFilters">Clear</button>
+        </div>
+
+        <div class="dashboard-grid" style="margin-top: 0; margin-bottom: 18px;">
+          <div class="dash-card">
+            <span class="dash-number" id="historyTotal">0</span>
+            <span class="dash-label">Total Records</span>
+          </div>
+          <div class="dash-card">
+            <span class="dash-number" id="historyTaken">0</span>
+            <span class="dash-label">Taken</span>
+          </div>
+          <div class="dash-card">
+            <span class="dash-number" id="historyMissed">0</span>
+            <span class="dash-label">Missed</span>
+          </div>
+          <div class="dash-card">
+            <span class="dash-number" id="historyUpcoming">0</span>
+            <span class="dash-label">Upcoming</span>
+          </div>
+        </div>
+
+        <div class="table-wrap" style="overflow-x:auto;">
+          <table style="width:100%; border-collapse: collapse;">
+            <thead>
+              <tr>
+                <th style="text-align:left; padding:12px; border-bottom:1px solid var(--border);">Date</th>
+                <th style="text-align:left; padding:12px; border-bottom:1px solid var(--border);">Medicine</th>
+                <th style="text-align:left; padding:12px; border-bottom:1px solid var(--border);">Dosage</th>
+                <th style="text-align:left; padding:12px; border-bottom:1px solid var(--border);">Type</th>
+                <th style="text-align:left; padding:12px; border-bottom:1px solid var(--border);">Time</th>
+                <th style="text-align:left; padding:12px; border-bottom:1px solid var(--border);">Status</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody"></tbody>
+          </table>
+        </div>
+
+        <p id="historyEmptyMsg" class="empty-msg hidden">No history available yet.</p>
+      </div>
+    </section>
+
+    <!-- ======================= PROFILE PAGE ======================= -->
+    <section id="profile" class="page">
+      <div class="form-wrapper">
+        <h2>My Profile</h2>
+        <p class="page-subtext">Manage your personal details and reminder preferences.</p>
+
+        <div class="profile-header" style="display:flex; gap:18px; align-items:center; background: var(--card-strong); border:1px solid var(--border); border-radius:18px; padding:20px; margin-bottom:22px;">
+          <div style="width:68px; height:68px; border-radius:50%; background: linear-gradient(135deg, var(--accent), var(--primary)); color:#fff; display:grid; place-items:center; font-size:1.8rem; font-weight:700;" id="profileAvatar">U</div>
+          <div>
+            <h3 id="profileDisplayName" style="margin:0 0 6px;">User</h3>
+            <div id="profileDisplayEmail" style="color:var(--muted);">user@example.com</div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="profileName">Full Name</label>
+            <input id="profileName" type="text" placeholder="Enter your full name" />
+          </div>
+
+          <div class="form-group">
+            <label for="profileEmail">Email</label>
+            <input id="profileEmail" type="email" placeholder="Enter your email" readonly />
+          </div>
+
+          <div class="form-group">
+            <label for="profilePhone">Phone</label>
+            <input id="profilePhone" type="tel" placeholder="Enter phone number" />
+          </div>
+
+          <div class="form-group">
+            <label for="profileDob">Date of Birth</label>
+            <input id="profileDob" type="date" />
+          </div>
+
+          <div class="form-group">
+            <label for="profileGender">Gender</label>
+            <select id="profileGender">
+              <option value="">Select Gender</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="profileBloodGroup">Blood Group</label>
+            <select id="profileBloodGroup">
+              <option value="">Select Blood Group</option>
+              <option>A+</option>
+              <option>A-</option>
+              <option>B+</option>
+              <option>B-</option>
+              <option>O+</option>
+              <option>O-</option>
+              <option>AB+</option>
+              <option>AB-</option>
+            </select>
+          </div>
+
+          <div class="form-group form-group-full">
+            <label for="profileAddress">Address</label>
+            <textarea id="profileAddress" rows="3" placeholder="Enter your address"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="profileEmergency">Emergency Contact</label>
+            <input id="profileEmergency" type="tel" placeholder="Emergency contact number" />
+          </div>
+
+          <div class="form-group">
+            <label for="profileCaregiver">Caregiver Name</label>
+            <input id="profileCaregiver" type="text" placeholder="Caregiver name" />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" id="saveProfileBtn">Save Profile</button>
+          <button class="btn btn-ghost" id="resetProfileBtn" type="button">Reset</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================= DELETE CONFIRMATION MODAL ======================= -->
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-box">
+      <h3>Delete this medicine?</h3>
+      <p>This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="cancelDeleteBtn">Cancel</button>
+        <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>MediReminder — your account and medicine data are saved in the local SQLite database.</p>
+  </footer>
+
+  <!-- Our own JavaScript file -->
+  <script src="script.js"></script>
+</body>
+</html>
