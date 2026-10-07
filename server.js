@@ -327,6 +327,6 @@ app.get("/script.js", (req, res) => res.sendFile(path.join(__dirname, "script.js
 app.get("/style.css", (req, res) => res.sendFile(path.join(__dirname, "style.css")));
 app.use((req, res) => sendError(res, 404, "Not found."));
 
-app.listen(port, "127.0.0.1", () => {
-  console.log(`MediReminder is running at http://localhost:${port}`);
+app.listen(port, "0.0.0.0", () => {
+    console.log(`MediReminder is running on port ${port}`);
 });
